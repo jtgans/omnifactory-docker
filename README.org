@@ -1,0 +1,43 @@
+* Omnifactory Docker Container
+
+This is a simple Minecraft Omnifactory mod pack container that automatically
+starts up the container the way Omnifactory should normally start in single
+player.
+
+This means you get the default Lost Cities map, the proper oregen, and so on!
+
+Additionally, this container runs as non-root user UID 1234, named minecraft
+with a primary group of 1234, also named minecraft. Bear this in mind when
+securing its /data volume.
+
+** How to use this
+
+Like any other docker container, with an additional helpful makefile:
+
+#+BEGIN_SRC shell
+$ make build
+...
+$ export EULA=true; make run
+#+END_SRC
+
+The container has a separate install process involved when its first run. It
+expects the /data volume to be where it will install the server to.
+
+Useful environment variables:
+
+| Variable     | Usage                                                                                                                                                                              |
+|--------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| EULA         | Must be set to true or the container won't run. This takes the place of Mojang's eula.txt file. If you set this variable to true, you explicitly agree to Mojang's [[https://account.mojang.com/documents/minecraft_eula][Minecraft EULA]]. |
+| GAMEMODE     | 0 or 1. Defaults to 0. Just like the `/gamemode` command in the game. Determines survival or creative.                                                                             |
+| DIFFICULTY   | The difficulty of monsters in the game. Defaults to 0. The usual settings apply here.                                                                                              |
+| HARDCORE     | `true` or `false`. Defaults to `false`. Determines hardcore mode.                                                                                                                  |
+| COMMANDBLOCK | `true` or `false`. Defaults to `false`. Determines if command blocks can be used in the map.                                                                                       |
+| MAXPLAYERS   | Defaults to 20. The number of players that can be connected at once.                                                                                                               |
+| WHITELIST    | `true` or `false`. Defaults to `false`. Whether or not to whitelist players.                                                                                                       |
+| SEED         | Defaults to nothing, so a random seed can be generated. Set this to genereate a specific map.                                                                                      |
+| MOTD         | Defaults to `A Minecraft Server`. The usual MOTD message that shows up in the minecraft multiplayer server list.                                                                   |
+| RCONPASS     | Defaults to nothing, so RCON won't be enabled by default. Set this to give RCON a password and enable RCON.                                                                        |
+
+On start, the container will update your installation using the latest version
+of the files it has in the container, update permissions, optionally create a
+server.properties file if there isn't one, and then start the server.

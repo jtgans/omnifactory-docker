@@ -99,7 +99,6 @@ echo "CHOWN -R minecraft:minecraft /data/*"
 try chown -R minecraft:minecraft /data/*
 
 maybe-create-server-properties
-maybe-create-ops-file
 
 echo "RUN /usr/bin/java -jar /data/forge-*.jar $@ nogui"
 try /usr/bin/java -jar /data/forge-*.jar "$@" nogui
