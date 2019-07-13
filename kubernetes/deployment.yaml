@@ -1,0 +1,57 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: omnifactory
+  namespace: omnifactory
+  labels:
+    app: omnifactory
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: omnifactory
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: omnifactory
+          image: jtgans/omnifactory-server:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /data
+              name: omnifactory-data
+          resources:
+            requests:
+              memory: 6Gi
+          ports:
+            - containerPort: 25565
+            - containerPort: 25575
+          readinessProbe:
+            tcpSocket:
+              port: 25565
+            initialDelaySeconds: 300
+            periodSeconds: 60
+            successThreshold: 3
+            failureThreshold: 10
+          livenessProbe:
+            tcpSocket:
+              port: 25565
+            timeoutSeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
+            initialDelaySeconds: 900
+          env:
+            - name: EULA
+              value: "true"
+            - name: RCONPASS
+              valueFrom:
+                secretKeyRef:
+                  name: omnifactory-rconpass
+                  key: password
+                  optional: true
+      volumes:
+        - name: omnifactory-data
+          persistentVolumeClaim:
+            claimName: omnifactory-data
